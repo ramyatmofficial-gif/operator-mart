@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operator Mart – Grade 7 Python Revision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1ea; --card:#fffdf8; --ink:#1d2433; --muted:#5d6678; --line:#e3ddd0;
+  --arith:#1f8a5b; --arith-soft:#e3f4ea; --assign:#2556c4; --assign-soft:#e5ecfb;
+  --warn:#c2410c; --warn-soft:#fdeee4; --gold:#b7791f; --gold-soft:#fbf1dc;
+  --ok:#15803d; --bad:#b91c1c; --code:#16202e;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Lexend,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:17px;line-height:1.5}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+code,.mono,textarea,pre{font-family:"JetBrains Mono",ui-monospace,Consolas,"Courier New",monospace}
+
+/* top bar */
+header{position:sticky;top:0;z-index:20;background:var(--ink);color:#fff;padding:12px 22px 0}
+.hrow{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{flex:1;min-width:240px}
+.brand h1{margin:0;font-size:22px;font-weight:700;letter-spacing:.2px}
+.brand p{margin:0;font-size:13px;opacity:.7}
+.clock{display:flex;align-items:center;gap:10px}
+.clock .big{font-family:"JetBrains Mono",Consolas,monospace;font-size:34px;font-weight:600;min-width:118px;text-align:right}
+.clock .lbl{font-size:12px;opacity:.7;text-align:right;line-height:1.2}
+.ctl{background:#fff;color:var(--ink);border:0;border-radius:10px;padding:9px 16px;font-weight:600}
+.ctl.ghost{background:transparent;color:#fff;border:1px solid #ffffff55}
+nav{display:flex;margin-top:12px;gap:4px}
+nav button{flex:var(--w);background:#ffffff14;color:#fff;border:0;border-radius:10px 10px 0 0;padding:9px 12px 8px;text-align:left;position:relative;overflow:hidden}
+nav button .t{font-weight:600;font-size:15px;display:block}
+nav button .m{font-size:12px;opacity:.75;font-family:"JetBrains Mono"}
+nav button .fill{position:absolute;left:0;bottom:0;height:4px;background:#f5c451;width:0}
+nav button.on{background:var(--bg);color:var(--ink)}
+nav button.done .t::after{content:" ✓";color:#4ade80}
+nav button.on.done .t::after{color:var(--ok)}
+
+main{max-width:1180px;margin:0 auto;padding:24px 22px 60px}
+section.stage{display:none}
+section.stage.on{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.stagehead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.stagehead h2{margin:0;font-size:28px}
+.pill{font-size:13px;padding:3px 10px;border-radius:99px;background:var(--line);color:var(--muted);font-weight:500}
+.lead{color:var(--muted);margin:0 0 20px;max-width:820px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.card h3{margin:0 0 10px;font-size:19px}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:6px;margin-bottom:8px}
+.tag.a{background:var(--arith-soft);color:var(--arith)}
+.tag.s{background:var(--assign-soft);color:var(--assign)}
+.tag.g{background:var(--gold-soft);color:var(--gold)}
+pre.code{background:var(--code);color:#e7edf7;border-radius:12px;padding:14px 16px;margin:0 0 12px;font-size:16px;line-height:1.6;overflow:auto;white-space:pre}
+.kw{color:#f5c451}.num{color:#7dd3fc}.cm{color:#7f8ea3}.str{color:#a7f3a0}
+.predict{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.predict input{font-family:"JetBrains Mono",Consolas,monospace;font-size:16px;padding:8px 10px;border:2px solid var(--line);border-radius:8px;flex:1;min-width:160px;background:#fff}
+.btn{border:0;border-radius:10px;padding:9px 16px;font-weight:600;background:var(--ink);color:#fff}
+.btn.sec{background:var(--line);color:var(--ink)}
+.btn.arith{background:var(--arith)}
+.btn.assign{background:var(--assign)}
+.btn.gold{background:var(--gold)}
+.btn:disabled{opacity:.5;cursor:default}
+.out{background:#0c121c;color:#b7f7c4;border-radius:10px;padding:10px 14px;font-family:"JetBrains Mono",Consolas,monospace;font-size:16px;min-height:44px;white-space:pre-wrap}
+.out.hide{display:none}
+.explain{margin-top:10px;font-size:15px;color:var(--muted);display:none}
+.explain.show{display:block}
+.qs{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.qs li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start}
+.qs li .n{flex:0 0 30px;height:30px;border-radius:50%;background:var(--warn-soft);color:var(--warn);font-weight:700;display:grid;place-items:center}
+.qs li .hint{display:none;color:var(--muted);font-size:15px;margin-top:4px}
+.qs li.open .hint{display:block}
+.qs li{cursor:pointer}
+
+/* flash cards */
+.legend{display:flex;gap:18px;margin-bottom:14px;flex-wrap:wrap;font-size:15px}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.fc{perspective:800px;height:150px;border:0;background:none;padding:0}
+.fc .in{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+.fc.flip .in{transform:rotateY(180deg)}
+.fc .f,.fc .b{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;text-align:center}
+.fc .f{background:var(--c);color:#fff;font-family:"JetBrains Mono",Consolas,monospace;font-size:40px;font-weight:600}
+.fc .f small{font-family:Lexend;font-size:12px;font-weight:400;opacity:.85;margin-top:4px}
+.fc .b{background:#fff;border:3px solid var(--c);transform:rotateY(180deg);font-size:14px;color:var(--ink)}
+.fc .b b{font-size:16px;color:var(--c)}
+.fc .b .ex{font-family:"JetBrains Mono",Consolas,monospace;font-size:14px;margin-top:6px}
+.fc .b .ans{font-family:"JetBrains Mono",Consolas,monospace;font-size:22px;font-weight:700;color:var(--c)}
+.fc.pick .in{box-shadow:0 0 0 5px #f5c451;border-radius:14px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.spot{display:none;margin-bottom:16px;border:3px dashed #f5c451;background:var(--gold-soft)}
+.spot.show{display:block}
+
+/* levels */
+.levels{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.lv{border:2px solid var(--line);background:var(--card);border-radius:12px;padding:10px 16px;text-align:left;min-width:180px}
+.lv .x{font-size:12px;color:var(--muted);display:block}
+.lv b{font-size:17px}
+.lv.on{border-color:var(--ink);box-shadow:0 3px 0 var(--ink)}
+.lv.won b::after{content:"  ★";color:var(--gold)}
+.lvpane{display:none}
+.lvpane.on{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:18px}
+@media(max-width:900px){.lvpane.on{grid-template-columns:1fr}}
+.task ol{margin:6px 0 0;padding-left:22px}
+.task li{margin-bottom:4px}
+.editor{width:100%;min-height:290px;background:var(--code);color:#e7edf7;border:0;border-radius:12px;padding:14px;font-size:15px;line-height:1.6;resize:vertical;tab-size:4}
+.runrow{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap;align-items:center}
+.status{font-size:14px;color:var(--muted)}
+.inputs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center;font-size:14px}
+.inputs label{display:flex;flex-direction:column;gap:2px}
+.inputs input{width:110px;font-family:"JetBrains Mono",Consolas,monospace;padding:6px 8px;border:2px solid var(--line);border-radius:8px}
+.fb{margin-top:10px;border-radius:10px;padding:10px 14px;font-size:15px;display:none}
+.fb.show{display:block}
+.fb.good{background:#dcfce7;color:#14532d}
+.fb.bad{background:#fee2e2;color:#7f1d1d}
+.fb.info{background:var(--assign-soft);color:#1e3a8a}
+.ptable{width:100%;border-collapse:collapse;font-size:15px;margin-top:10px}
+.ptable td,.ptable th{border-bottom:1px solid var(--line);padding:6px 6px;text-align:left}
+.ptable input{width:90px;font-family:"JetBrains Mono",Consolas,monospace;padding:5px 7px;border:2px solid var(--line);border-radius:7px}
+.ptable .r{font-family:"JetBrains Mono",Consolas,monospace;font-weight:600}
+.hintbox{display:none;background:var(--gold-soft);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:14px}
+.hintbox.show{display:block}
+.hintbox pre{margin:6px 0 0;font-size:14px}
+.pairs{margin-top:14px;padding:12px 16px;border-radius:12px;background:var(--warn-soft);color:#7c2d12;font-size:15px}
+
+/* plenary */
+.mcq{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.opt{border:2px solid var(--line);background:#fff;border-radius:12px;padding:14px;font-family:"JetBrains Mono",Consolas,monospace;font-size:20px;font-weight:600}
+.opt.right{border-color:var(--ok);background:#dcfce7}
+.opt.wrong{border-color:var(--bad);background:#fee2e2}
+.score{font-size:22px;font-weight:700}
+.miscon{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:14px}
+.miscon .card{cursor:pointer}
+.miscon .card .back{display:none;margin-top:8px;font-size:15px;color:var(--muted)}
+.miscon .card.open .back{display:block}
+.hw{margin-top:18px;border-left:6px solid var(--assign)}
+
+/* time-up banner */
+.banner{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(140%);background:var(--warn);color:#fff;padding:14px 20px;border-radius:14px;display:flex;gap:14px;align-items:center;box-shadow:0 10px 30px #0004;transition:transform .3s;z-index:30;font-weight:600}
+.banner.show{transform:translateX(-50%) translateY(0)}
+.banner button{background:#fff;color:var(--warn);border:0;border-radius:9px;padding:8px 14px;font-weight:700}
+.nextbar{display:flex;justify-content:flex-end;margin-top:22px}
+footer{text-align:center;font-size:13px;color:var(--muted);padding:10px}
+.me{background:#ffffff1a;border-radius:99px;padding:7px 14px;font-size:14px;white-space:nowrap}
+.me b{color:#f5c451}
+.finish{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:8px 0 18px;color:var(--muted);font-size:14px}
+.btn.big{font-size:19px;padding:14px 24px;border-radius:14px}
+.modal{position:fixed;inset:0;background:#0b1220b3;z-index:50;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:30px 14px}
+.modal.show{display:flex}
+.mbox{background:var(--card);border-radius:20px;max-width:880px;width:100%;padding:24px 26px;box-shadow:0 20px 60px #0006}
+.mbox h2{margin:0 0 4px}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;font-size:15px}
+.field input,.field select{font-family:inherit;font-size:17px;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:#fff}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row .field{flex:1;min-width:140px}
+.rep{display:grid;grid-template-columns:300px 1fr;gap:22px;margin-top:14px}
+@media(max-width:760px){.rep{grid-template-columns:1fr}}
+.rep canvas{width:100%;border-radius:16px;background:#fff}
+.btab{width:100%;border-collapse:collapse;font-size:15px}
+.btab td{padding:7px 6px;border-bottom:1px solid var(--line)}
+.btab td:last-child{text-align:right;font-family:"JetBrains Mono",Consolas,monospace;font-weight:600}
+.btab tr.tot td{font-size:18px;font-weight:700;border-bottom:0}
+.saved{margin-top:12px;font-size:14px;padding:8px 12px;border-radius:9px;background:var(--line)}
+.saved.ok{background:#dcfce7;color:#14532d}.saved.err{background:#fee2e2;color:#7f1d1d}
+.ctab{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+.ctab th,.ctab td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
+.ctab th{background:var(--bg);position:sticky;top:0}
+.bdg{padding:2px 9px;border-radius:99px;font-weight:600;font-size:13px}
+.bdg.Gold{background:#fbe7a6;color:#7a5200}.bdg.Silver{background:#e5e7eb;color:#374151}.bdg.Bronze{background:#f4d2b5;color:#7c3d12}
+.counts{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.counts span{padding:6px 12px;border-radius:10px;background:var(--bg);font-weight:600}
+.note{font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div class="brand">
+      <h1>Operator Mart 🛒</h1>
+      <p>Grade VII · Revision: Arithmetic &amp; Assignment Operators</p>
+    </div>
+    <div class="me" id="meChip" title="Your score so far. Click to change student." style="cursor:pointer">👤 <span id="meName">Not signed in</span> · ★ <b id="meScore">0</b>/20</div>
+    <button class="ctl ghost" id="teacherBtn">👩‍🏫 Teacher</button>
+    <div class="clock">
+      <div class="lbl">this stage<br><span id="totalLbl">class: 30:00 left</span></div>
+      <div class="big" id="stageClock">05:00</div>
+      <button class="ctl" id="playBtn">▶ Start</button>
+      <button class="ctl ghost" id="resetBtn" title="Restart the stage timer">↺</button>
+    </div>
+  </div>
+  <nav id="nav"></nav>
+</header>
+
+<main>
+
+<!-- STARTER -->
+<section class="stage on" id="s0">
+  <div class="stagehead"><h2>Starter: Predict, then Run</h2><span class="pill">5 mins</span></div>
+  <p class="lead">Read each program. Write what you think Python will print. Then press <b>Run</b> to check.</p>
+  <div class="grid2">
+    <div class="card">
+      <span class="tag a">Program A · Arithmetic</span>
+<pre class="code"><span class="cm"># Program A</span>
+x = <span class="num">10</span>
+y = <span class="num">6</span>
+<span class="kw">print</span>(x / y, x // y, x % y, x ** <span class="num">2</span>)</pre>
+      <div class="predict"><input id="pA" placeholder="My prediction…" aria-label="Prediction for program A"><button class="btn arith" data-run="A">Run ▶</button></div>
+      <div class="out hide" id="oA">1.6666666666666667 1 4 100</div>
+      <div class="explain" id="eA"><b>/</b> gives the full decimal answer. <b>//</b> keeps only the whole number (1). <b>%</b> gives the remainder (10 = 6×1 + <b>4</b>). <b>**</b> is the power: 10² = 100.</div>
+    </div>
+    <div class="card">
+      <span class="tag s">Program B · Assignment</span>
+<pre class="code"><span class="cm"># Program B</span>
+score = <span class="num">50</span>
+score += <span class="num">10</span>
+score *= <span class="num">2</span>
+<span class="kw">print</span>(score)</pre>
+      <div class="predict"><input id="pB" placeholder="My prediction…" aria-label="Prediction for program B"><button class="btn assign" data-run="B">Run ▶</button></div>
+      <div class="out hide" id="oB">120</div>
+      <div class="explain" id="eB"><b>score += 10</b> means score = score + 10 → 60. <b>score *= 2</b> means score = score × 2 → <b>120</b>. Python works line by line, top to bottom.</div>
+    </div>
+  </div>
+  <h3 style="margin:24px 0 10px">Curiosity questions <span class="pill">tap to reveal a hint</span></h3>
+  <ul class="qs">
+    <li><span class="n">1</span><div>Why does <code>10 / 6</code> give 1.66 but <code>10 // 6</code> give only 1? Where did the remainder go?<div class="hint">Hint: <code>//</code> throws the decimal part away. The remainder is still there. You can get it with <code>%</code>.</div></div></li>
+    <li><span class="n">2</span><div>Is <code>score += 10</code> the same as <code>score = score + 10</code>? Why do programmers prefer the short form?<div class="hint">Hint: Yes, they do the same thing. The short form is faster to type and you are less likely to make a spelling mistake.</div></div></li>
+    <li><span class="n">3</span><div>Where does a computer keep updating a running total in real life?<div class="hint">Nol card balance (<code>balance -= fare</code>), a shopping bill, a game score (<code>score += 10</code>), an ATM balance…</div></div></li>
+  </ul>
+  <div class="nextbar"><button class="btn" data-go="1">Next: Quick-Fire Recall →</button></div>
+</section>
+
+<!-- ACTIVITY 1 -->
+<section class="stage" id="s1">
+  <div class="stagehead"><h2>Activity 1: Quick-Fire Operator Recall</h2><span class="pill">4 mins</span></div>
+  <p class="lead">Tap a card to flip it. Say the <b>name</b> and the <b>answer</b> before you flip. Arithmetic cards use <code>x = 10, y = 6</code>. Assignment cards start with <code>x = 10</code> each time.</p>
+  <div class="legend"><span style="--c:var(--arith)">Arithmetic operators</span><span style="--c:var(--assign)">Assignment operators</span></div>
+  <div class="toolbar">
+    <button class="btn gold" id="randBtn">🎲 Random card</button>
+    <button class="btn sec" id="flipAll">Flip all</button>
+    <button class="btn sec" id="resetCards">Reset cards</button>
+  </div>
+  <div class="deck" id="deck"></div>
+  <div class="nextbar"><button class="btn" data-go="2">Next: Three-Level Challenge →</button></div>
+</section>
+
+<!-- ACTIVITY 2 -->
+<section class="stage" id="s2">
+  <div class="stagehead"><h2>Activity 2: ‘Operator Mart’ Coding Challenge</h2><span class="pill">16 mins</span></div>
+  <p class="lead">Start at <b>Level 1</b> and move up when you are done. Every program starts with a <code>#</code> comment. Press <b>Run</b> to run real Python here, or type the same code in IDLE and press F5.</p>
+  <div class="levels" id="levels">
+    <button class="lv on" data-lv="0"><span class="x">ALL · Arithmetic</span><b>Level 1</b></button>
+    <button class="lv" data-lv="1"><span class="x">MOST · Assignment</span><b>Level 2</b></button>
+    <button class="lv" data-lv="2"><span class="x">SOME · Both together</span><b>Level 3</b></button>
+    <button class="lv" data-lv="3"><span class="x">G&amp;T · No computer!</span><b>Extension</b></button>
+  </div>
+
+  <!-- L1 -->
+  <div class="lvpane on" id="lv0">
+    <div class="card task">
+      <span class="tag a">Level 1 · Arithmetic</span>
+      <h3>Seven operators, one program</h3>
+      <p>Use <code>a = 25</code> and <code>b = 4</code>. Print each result <b>with a label</b>:</p>
+      <ol><li><code>a + b</code></li><li><code>a - b</code></li><li><code>a * b</code></li><li><code>a / b</code></li><li><code>a // b</code></li><li><code>a % b</code></li><li><code>a ** 2</code></li></ol>
+      <button class="btn sec" data-hint="h0" style="margin-top:10px">💡 Help card (SEND)</button>
+      <div class="hintbox" id="h0">Fill in the blanks with the right operator:
+<pre class="code">print("Subtraction:", a ___ b)
+print("Multiplication:", a ___ b)
+print("Floor division:", a ___ b)
+print("Remainder:", a ___ b)</pre></div>
+    </div>
+    <div>
+      <textarea class="editor" id="ed0" spellcheck="false"># Level 1: Arithmetic operators
+a = 25
+b = 4
+print("Addition:", a + b)
+# Now print the other six results with labels
+</textarea>
+      <div class="runrow"><button class="btn arith" data-runlv="0">Run ▶</button><button class="btn sec" data-check="0">✔ Check my work</button><span class="status" id="st0"></span></div>
+      <div class="out" id="out0">Output appears here</div>
+      <div class="fb" id="fb0"></div>
+    </div>
+  </div>
+
+  <!-- L2 -->
+  <div class="lvpane" id="lv1">
+    <div class="card task">
+      <span class="tag s">Level 2 · Assignment</span>
+      <h3>Running total</h3>
+      <p>Start with <code>total = 100</code>. Then apply these steps <b>in order</b>, and print <code>total</code> after each one:</p>
+      <ol><li><code>+= 20</code></li><li><code>-= 15</code></li><li><code>*= 2</code></li><li><code>//= 3</code></li><li><code>%= 7</code></li></ol>
+      <p style="margin-top:8px">First <b>predict</b> each value in the table (and as a <code># comment</code> in your code). Then run your program.</p>
+      <table class="ptable" id="ptab"><tr><th>Step</th><th>My prediction</th><th>Python says</th></tr></table>
+      <button class="btn sec" data-hint="h1" style="margin-top:10px">💡 Help card (SEND)</button>
+      <div class="hintbox" id="h1">Remember, <code>total -= 15</code> means <code>total = total - 15</code>. Work it out on paper one line at a time, using the answer from the line before.</div>
+    </div>
+    <div>
+      <textarea class="editor" id="ed1" spellcheck="false"># Level 2: Assignment operators
+total = 100
+total += 20
+print("After += 20:", total)   # I predict:
+# continue with -= 15, *= 2, //= 3, %= 7
+</textarea>
+      <div class="runrow"><button class="btn assign" data-runlv="1">Run ▶</button><button class="btn sec" data-check="1">✔ Compare with my predictions</button><span class="status" id="st1"></span></div>
+      <div class="out" id="out1">Output appears here</div>
+      <div class="fb" id="fb1"></div>
+    </div>
+  </div>
+
+  <!-- L3 -->
+  <div class="lvpane" id="lv2">
+    <div class="card task">
+      <span class="tag g">Level 3 · Both together</span>
+      <h3>🧾 Shopping Bill (UAE 5% VAT)</h3>
+      <ol>
+        <li>Use <code>input()</code> to read the <b>price</b>, the <b>quantity</b> and the <b>discount</b>, in that order.</li>
+        <li><code>bill = price * quantity</code></li>
+        <li>Take off the discount: <code>bill -= discount</code></li>
+        <li>Add 5% VAT: <code>bill *= 1.05</code></li>
+        <li>Print the final bill.</li>
+      </ol>
+      <p style="font-size:15px;color:var(--muted)">Tip: use <code>float(input(...))</code> so you can do maths with the values you type in.</p>
+      <button class="btn sec" data-hint="h2" style="margin-top:6px">💡 Help card</button>
+      <div class="hintbox" id="h2"><pre class="code">price = float(input("Enter price: "))
+quantity = int(input("Enter quantity: "))
+discount = float(input("Enter discount: "))
+bill = price * quantity
+bill ___ discount
+bill ___ 1.05
+print("Final bill (AED):", bill)</pre></div>
+    </div>
+    <div>
+      <textarea class="editor" id="ed2" spellcheck="false"># Level 3: Shopping Bill with 5% VAT
+price = float(input("Enter price: "))
+</textarea>
+      <div class="inputs">Values to type in when the program runs:
+        <label>price<input id="in_p" value="40"></label>
+        <label>quantity<input id="in_q" value="3"></label>
+        <label>discount<input id="in_d" value="10"></label>
+      </div>
+      <div class="runrow"><button class="btn gold" data-runlv="2">Run ▶</button><button class="btn sec" data-check="2">✔ Check my bill</button><span class="status" id="st2"></span></div>
+      <div class="out" id="out2">Output appears here</div>
+      <div class="fb" id="fb2"></div>
+    </div>
+  </div>
+
+  <!-- Extension -->
+  <div class="lvpane" id="lv3">
+    <div class="card">
+      <span class="tag g">Extension (G&amp;T) · Predict without running</span>
+      <h3>Challenge 1: What is x at the end?</h3>
+<pre class="code">x = <span class="num">7</span>
+x **= <span class="num">2</span>
+x //= <span class="num">5</span>
+x %= <span class="num">4</span>
+<span class="kw">print</span>(x)</pre>
+      <div class="predict"><input id="gx" placeholder="x = ?"><button class="btn gold" data-gt="x">Check</button></div>
+      <div class="fb" id="fbx"></div>
+    </div>
+    <div class="card">
+      <span class="tag g">Extension (G&amp;T) · Order of operations</span>
+      <h3>Challenge 2: Which operator goes first?</h3>
+<pre class="code"><span class="kw">print</span>(<span class="num">2</span> * <span class="num">3</span> ** <span class="num">2</span> + <span class="num">10</span> // <span class="num">4</span>)</pre>
+      <div class="predict"><input id="ge" placeholder="Output = ?"><button class="btn gold" data-gt="e">Check</button></div>
+      <div class="fb" id="fbe"></div>
+      <p style="font-size:14px;color:var(--muted);margin:10px 0 0">Sneak peek of next month: Python has an order (precedence) for operators. <code>**</code> is done first, then <code>* / // %</code>, then <code>+ -</code>.</p>
+    </div>
+  </div>
+
+  <div class="pairs">👥 <b>Pair check (last 2 mins):</b> swap screens with your partner. Does each <code># I predict</code> comment match the real output? If not, find out why together.</div>
+  <div class="nextbar"><button class="btn" data-go="3">Next: Exit Ticket →</button></div>
+</section>
+
+<!-- PLENARY -->
+<section class="stage" id="s3">
+  <div class="stagehead"><h2>Plenary: Exit Ticket</h2><span class="pill">5 mins</span></div>
+  <p class="lead">Two quick questions. Answer them here, then fill in the same exit ticket on the LMS.</p>
+  <div class="grid2">
+    <div class="card">
+      <span class="tag a">Q1</span>
+      <h3>If <code>x = 17</code> and <code>y = 5</code>, what is the output of <code>print(x // y, x % y)</code>?</h3>
+      <div class="mcq" data-q="1" data-ans="0">
+        <button class="opt">3 2</button><button class="opt">3.4 2</button><button class="opt">3 3</button><button class="opt">2 3</button>
+      </div>
+      <div class="explain" id="x1">17 = 5 × <b>3</b> + <b>2</b>. So <code>//</code> gives 3 and <code>%</code> gives the remainder 2. (3.4 would come from <code>/</code>.)</div>
+    </div>
+    <div class="card">
+      <span class="tag s">Q2</span>
+      <h3>True or False: after <code>a = 8</code> and then <code>a *= 3</code>, the value of <code>a</code> is 24.</h3>
+      <div class="mcq" data-q="2" data-ans="0">
+        <button class="opt">True</button><button class="opt">False</button>
+      </div>
+      <div class="explain" id="x2"><b>True.</b> <code>a *= 3</code> means <code>a = a * 3</code> = 8 × 3 = 24.</div>
+    </div>
+  </div>
+  <p class="score" id="score" style="margin:18px 0 4px"></p>
+  <div class="finish"><button class="btn gold big" id="finishBtn">🏅 Finish &amp; get my badge</button><span>Gold 16–20 · Silver 11–15 · Bronze 0–10</span></div>
+
+  <h3 style="margin:22px 0 4px">Clear the misconceptions <span class="pill">tap each card</span></h3>
+  <div class="miscon">
+    <div class="card"><b><code>/</code> vs <code>//</code></b><div class="back"><code>10 / 4</code> → 2.5 (keeps the decimal)<br><code>10 // 4</code> → 2 (whole number only)</div></div>
+    <div class="card"><b><code>x = x + 1</code> vs <code>x += 1</code></b><div class="back">They do exactly the same thing. <code>+=</code> is just the short form. It updates the value already stored in x.</div></div>
+    <div class="card"><b>What does <code>%</code> really do?</b><div class="back">It is <b>not</b> percentage! <code>%</code> gives the <b>remainder</b>. <code>10 % 3</code> → 1.</div></div>
+  </div>
+
+  <div class="card hw">
+    <span class="tag s">Homework</span>
+    <h3>My Pocket Money Tracker</h3>
+    <ul style="margin:0;padding-left:20px">
+      <li>Write a Python program with <code>#</code> comments. Start with <code>pocket = 200</code>, then use <code>-=</code>, <code>+=</code> and <code>//=</code> to show your spending, your savings and a weekly share.</li>
+      <li>Write your predicted value as a comment after each line. Run it in IDLE and copy the outputs into your notebook.</li>
+      <li><b>(G&amp;T)</b> Use <code>input()</code> to read the amount. Use <code>**</code> and <code>%</code> to show your savings after interest and the leftover dirhams.</li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<!-- sign-in -->
+<div class="modal" id="signin"><div class="mbox" style="max-width:520px">
+  <h2>👋 Welcome to Operator Mart</h2>
+  <p class="note" style="margin-top:0">Type your details so your badge and report have your name on them.</p>
+  <div class="field"><label for="sName">Full name</label><input id="sName" autocomplete="off" placeholder="e.g. Mohammed Ayaan"></div>
+  <div class="row">
+    <div class="field"><label for="sSec">Section</label><select id="sSec"><option>VII A</option><option>VII C</option><option>VII E</option></select></div>
+    <div class="field"><label for="sRoll">Roll no.</label><input id="sRoll" inputmode="numeric" placeholder="e.g. 12"></div>
+  </div>
+  <p id="sErr" class="note" style="color:var(--bad)"></p>
+  <div class="row"><button class="btn big" id="sGo">Start ▶</button><button class="btn sec" id="sSkip">Teacher / demo mode</button></div>
+</div></div>
+
+<!-- report -->
+<div class="modal" id="report"><div class="mbox">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><h2 id="rTitle">Your report</h2><div class="note" id="rSub"></div></div><button class="btn sec" id="rClose">✕ Close</button></div>
+  <div class="rep">
+    <div><canvas id="badgeCv" width="600" height="720"></canvas></div>
+    <div>
+      <table class="btab" id="rTab"></table>
+      <p id="rMsg" style="font-size:15px"></p>
+      <div class="row"><button class="btn gold" id="dlBadge">⬇ Download badge (PNG)</button><button class="btn" id="dlReport">⬇ Download report (PDF)</button></div>
+      <div class="saved" id="rSaved">Saving to the class list…</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- teacher -->
+<div class="modal" id="teacher"><div class="mbox" style="max-width:1000px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><h2>👩‍🏫 Class list &amp; badges</h2><div class="note">Results are saved in your Google Sheet.</div></div><button class="btn sec" id="tClose">✕ Close</button></div>
+  <div id="tSetup" class="saved err" style="display:none">The Google Sheet is not connected yet. Paste your Apps Script web-app link into <code>SHEET_URL</code> near the bottom of index.html (see SETUP.md).</div>
+  <div class="row" style="align-items:flex-end;margin-top:12px">
+    <div class="field"><label for="tKey">Teacher key</label><input id="tKey" type="password" placeholder="key from the Apps Script"></div>
+    <div class="field"><label for="tSec">Section</label><select id="tSec"><option value="">All</option><option>VII A</option><option>VII C</option><option>VII E</option></select></div>
+    <div class="field"><label for="tLatest">Show</label><select id="tLatest"><option value="1">Latest attempt per student</option><option value="0">Every attempt</option></select></div>
+    <div class="field" style="flex:0"><button class="btn" id="tLoad">Load list</button></div>
+    <div class="field" style="flex:0"><button class="btn sec" id="tCsv">⬇ CSV</button></div>
+  </div>
+  <div class="counts" id="tCounts"></div>
+  <div style="max-height:55vh;overflow:auto"><table class="ctab" id="tTab"></table></div>
+  <p class="note" id="tMsg"></p>
+</div></div>
+
+<div class="banner" id="banner"><span id="bannerTxt">⏰ Time's up!</span><button id="bannerGo">Next stage →</button><button id="bannerX" style="background:transparent;color:#fff;border:1px solid #fff8">Stay</button></div>
+<footer>Ms. Ramya T M · Department of Computer Science · Lesson plan: Revision of Arithmetic &amp; Assignment Operators (Ch. 8 – More on Python)</footer>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+/* ---------- stages & timers ---------- */
+const STAGES=[{n:"Starter",m:5},{n:"Activity 1 · Recall",m:4},{n:"Activity 2 · Levels",m:16},{n:"Plenary · Exit ticket",m:5}];
+const left=STAGES.map(s=>s.m*60);
+let cur=0,running=false,tick=null,alerted=STAGES.map(()=>false);
+const nav=document.getElementById('nav');
+STAGES.forEach((s,i)=>{const b=document.createElement('button');b.style.setProperty('--w',s.m);
+  b.innerHTML=`<span class="t">${s.n}</span><span class="m">${s.m} min</span><span class="fill"></span>`;
+  b.onclick=()=>go(i);nav.appendChild(b);});
+const fmt=t=>{t=Math.max(0,t);return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')};
+function render(){
+  [...nav.children].forEach((b,i)=>{b.classList.toggle('on',i===cur);
+    b.querySelector('.fill').style.width=(100*(1-left[i]/(STAGES[i].m*60)))+'%';
+    b.classList.toggle('done',left[i]===0);
+    b.querySelector('.m').textContent=left[i]===STAGES[i].m*60?STAGES[i].m+' min':fmt(left[i])+' left';});
+  const sc=document.getElementById('stageClock');sc.textContent=fmt(left[cur]);
+  sc.style.color=left[cur]<=60?'#fca5a5':'#fff';
+  document.getElementById('totalLbl').textContent='class: '+fmt(left.reduce((a,b)=>a+b,0))+' left';
+  document.getElementById('playBtn').textContent=running?'❚❚ Pause':'▶ Start';
+}
+function go(i){cur=i;document.querySelectorAll('section.stage').forEach((s,k)=>s.classList.toggle('on',k===i));
+  hideBanner();render();window.scrollTo({top:0,behavior:'smooth'});
+  if(i===2)ensurePy().catch(()=>{});}
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));
+let actx=null;
+function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  [0,0.25,0.5].forEach(d=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;o.connect(g);g.connect(actx.destination);
+  g.gain.setValueAtTime(0.15,actx.currentTime+d);g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+d+0.2);o.start(actx.currentTime+d);o.stop(actx.currentTime+d+0.22);});}catch(e){}}
+function step(){if(left[cur]>0){left[cur]--;}
+  if(left[cur]===0&&!alerted[cur]){alerted[cur]=true;beep();showBanner();}
+  render();}
+document.getElementById('playBtn').onclick=()=>{running=!running;
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();}catch(e){}
+  clearInterval(tick);if(running)tick=setInterval(step,1000);render();};
+document.getElementById('resetBtn').onclick=()=>{left[cur]=STAGES[cur].m*60;alerted[cur]=false;render();};
+const banner=document.getElementById('banner');
+function showBanner(){document.getElementById('bannerTxt').textContent=cur<3?`⏰ Time's up for ${STAGES[cur].n}!`:'⏰ 30 minutes done. Great work, Grade 7!';
+  document.getElementById('bannerGo').style.display=cur<3?'':'none';banner.classList.add('show');}
+function hideBanner(){banner.classList.remove('show');}
+document.getElementById('bannerGo').onclick=()=>go(Math.min(3,cur+1));
+document.getElementById('bannerX').onclick=hideBanner;
+render();
+
+/* ---------- starter ---------- */
+document.querySelectorAll('[data-run]').forEach(b=>b.onclick=()=>{const k=b.dataset.run;
+  document.getElementById('o'+k).classList.remove('hide');document.getElementById('e'+k).classList.add('show');
+  if(S['st'+k]===undefined){const v=nums(document.getElementById('p'+k).value.replace(/\.\.\.|…/g,''));
+    const ok=k==='A'?(v.length===4&&Math.abs(v[0]-5/3)<0.02&&v[1]===1&&v[2]===4&&v[3]===100):(v.length===1&&v[0]===120);
+    S['st'+k]=ok?1:0;saveS();}});
+document.querySelectorAll('.qs li').forEach(li=>li.onclick=()=>li.classList.toggle('open'));
+
+/* ---------- flash cards ---------- */
+const CARDS=[
+ ['+','Addition','x + y','16','a'],['-','Subtraction','x - y','4','a'],['*','Multiplication','x * y','60','a'],
+ ['/','Division','x / y','1.666…','a'],['%','Modulus (remainder)','x % y','4','a'],['**','Exponentiation (power)','x ** y','1000000','a'],
+ ['//','Floor division','x // y','1','a'],
+ ['=','Assignment','x = 5','x is 5','s'],['+=','Add & assign','x += 3','x is 13','s'],['-=','Subtract & assign','x -= 3','x is 7','s'],
+ ['*=','Multiply & assign','x *= 3','x is 30','s'],['/=','Divide & assign','x /= 4','x is 2.5','s'],['%=','Remainder & assign','x %= 3','x is 1','s'],
+ ['//=','Floor divide & assign','x //= 3','x is 3','s'],['**=','Power & assign','x **= 2','x is 100','s']];
+const deck=document.getElementById('deck');
+CARDS.forEach(c=>{const b=document.createElement('button');b.className='fc';b.style.setProperty('--c',c[4]==='a'?'var(--arith)':'var(--assign)');
+  b.innerHTML=`<div class="in"><div class="f">${c[0]}<small>${c[4]==='a'?'arithmetic':'assignment'}</small></div><div class="b"><b>${c[1]}</b><div class="ex">${c[2]}</div><div class="ans">${c[3]}</div></div></div>`;
+  b.onclick=()=>{b.classList.toggle('flip');b.classList.remove('pick')};deck.appendChild(b);});
+document.getElementById('randBtn').onclick=()=>{const cs=[...deck.children];cs.forEach(c=>c.classList.remove('pick'));
+  const pool=cs.filter(c=>!c.classList.contains('flip'));const p=(pool.length?pool:cs)[Math.floor(Math.random()*(pool.length||cs.length))];
+  p.classList.remove('flip');p.classList.add('pick');p.scrollIntoView({behavior:'smooth',block:'center'});};
+document.getElementById('flipAll').onclick=()=>[...deck.children].forEach(c=>c.classList.add('flip'));
+document.getElementById('resetCards').onclick=()=>[...deck.children].forEach(c=>c.classList.remove('flip','pick'));
+
+/* ---------- levels ---------- */
+document.querySelectorAll('.lv').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.lv').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.lvpane').forEach((p,i)=>p.classList.toggle('on',i==b.dataset.lv));});
+document.querySelectorAll('[data-hint]').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.hint).classList.toggle('show'));
+document.querySelectorAll('.editor').forEach(t=>t.addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();
+  const s=t.selectionStart;t.value=t.value.slice(0,s)+'    '+t.value.slice(t.selectionEnd);t.selectionStart=t.selectionEnd=s+4;}}));
+const STEPS=['+= 20','-= 15','*= 2','//= 3','%= 7'],L2=['120','105','210','70','0'];
+const ptab=document.getElementById('ptab');
+STEPS.forEach((s,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td><code>total ${s}</code></td><td><input id="pr${i}"></td><td class="r" id="ac${i}">?</td>`;ptab.appendChild(tr);});
+
+/* Pyodide */
+let py=null,pyLoading=null;
+function setStatus(t){[0,1,2].forEach(i=>document.getElementById('st'+i).textContent=t);}
+function ensurePy(){if(py)return Promise.resolve(py);if(pyLoading)return pyLoading;
+  if(typeof loadPyodide==='undefined'){setStatus('Python could not load here. Use IDLE instead.');return Promise.reject();}
+  setStatus('⏳ Loading Python…');
+  pyLoading=loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/'}).then(p=>{py=p;setStatus('✅ Python ready');return p;})
+   .catch(e=>{setStatus('Python could not load here. Use IDLE instead.');pyLoading=null;throw e;});
+  return pyLoading;}
+const outputs=['','',''];
+async function runLevel(i){
+  const outEl=document.getElementById('out'+i);outEl.textContent='Running…';
+  let p;try{p=await ensurePy();}catch(e){outEl.textContent='Python is not available in this browser. Type your code in IDLE and press F5.';return null;}
+  let out='';
+  const inputs=i===2?[document.getElementById('in_p').value,document.getElementById('in_q').value,document.getElementById('in_d').value]:[];
+  p.setStdout({batched:s=>out+=s+'\n'});p.setStderr({batched:s=>out+=s+'\n'});
+  const ns=p.globals.get('dict')();
+  ns.set('__js_input',(pr)=>{const v=inputs.length?String(inputs.shift()):'';out+=(pr===undefined?'':pr)+v+'\n';return v;});
+  let ok=true;
+  try{p.runPython('import builtins\ndef input(prompt=""):\n    return __js_input(str(prompt))\n',{globals:ns});
+      p.runPython(document.getElementById('ed'+i).value,{globals:ns});}
+  catch(e){ok=false;const lines=String(e.message||e).trim().split('\n');
+    const last=lines[lines.length-1];const ln=(String(e.message).match(/line (\d+)/g)||[]).pop();
+    out+='\n❌ '+last+(ln?'  ('+ln+')':'')+'\n';}
+  ns.destroy&&ns.destroy();
+  outputs[i]=out;outEl.textContent=out.trim()||'(nothing was printed: did you use print()?)';
+  return ok;}
+document.querySelectorAll('[data-runlv]').forEach(b=>b.onclick=()=>runLevel(+b.dataset.runlv));
+const nums=s=>(s.match(/-?\d+(?:\.\d+)?(?:e[-+]?\d+)?/gi)||[]).map(Number);
+function fb(i,cls,html){const f=document.getElementById('fb'+i);f.className='fb show '+cls;f.innerHTML=html;}
+function win(i){document.querySelector(`.lv[data-lv="${i}"]`).classList.add('won');if(i<3){S['l'+(i+1)]=3;saveS();}}
+document.querySelectorAll('[data-check]').forEach(b=>b.onclick=async()=>{
+  const i=+b.dataset.check;const ok=await runLevel(i);if(ok===null)return;
+  const code=document.getElementById('ed'+i).value.replace(/#.*$/gm,'');const o=outputs[i];
+  if(!ok){fb(i,'bad','There is an error in your code. Read the ❌ line in the output and fix it.');return;}
+  if(i===0){
+    const need=[['+',29],['-',21],['*',100],['/',6.25],['//',6],['%',1],['**',625]];
+    const have=nums(o.replace(/\b(25|4)\b(?=[^\n]*:)/g,''));
+    const miss=need.filter(([op,v])=>!nums(o).some(n=>Math.abs(n-v)<1e-9));
+    const labels=(o.match(/[A-Za-z]/g)||[]).length>10;
+    if(!miss.length&&labels){fb(0,'good','⭐ Excellent! All 7 results are correct: 29, 21, 100, 6.25, 6, 1, 625. Move up to <b>Level 2</b>!');win(0);}
+    else if(!miss.length){fb(0,'info','All the numbers are right. Now add a <b>label</b> to each print, like <code>print("Remainder:", a % b)</code>.');}
+    else fb(0,'bad','Still missing: '+miss.map(m=>'<code>a '+m[0]+(m[0]==='**'?' 2':' b')+'</code>').join(', ')+'. Check your operators and add the missing lines.');
+  }
+  if(i===1){
+    const got=nums(o).filter(n=>![20,15,2,3,7].includes(n)||L2.map(Number).includes(n));
+    let k=0;const actual=[];for(const n of nums(o)){if(k<5&&Math.abs(n-Number(L2[k]))<1e-9){actual.push(n);k++;}}
+    // show what Python actually printed per step (best effort: the last number on each printed line)
+    const lines=o.trim().split('\n').filter(l=>/\d/.test(l));
+    let right=0,predRight=0;
+    STEPS.forEach((s,j)=>{const line=lines[j];const v=line?nums(line).pop():undefined;
+      const cell=document.getElementById('ac'+j);cell.textContent=v===undefined?'–':v;
+      const pr=document.getElementById('pr'+j).value.trim();
+      const pc=pr!==''&&Math.abs(Number(pr)-Number(L2[j]))<1e-9;if(pc)predRight++;
+      document.getElementById('pr'+j).style.borderColor=pr===''?'var(--line)':(pc?'var(--ok)':'var(--bad)');
+      if(v!==undefined&&Math.abs(v-Number(L2[j]))<1e-9){right++;cell.style.color='var(--ok)';}else cell.style.color='var(--bad)';});
+    if(right===5){S.l2pred=Math.max(S.l2pred||0,predRight);fb(1,'good',`⭐ Your program is correct (120 → 105 → 210 → 70 → 0). You predicted <b>${predRight}/5</b> correctly.${predRight<5?' Look at the red boxes. Why was Python\'s answer different?':''} Try <b>Level 3</b>!`);win(1);}
+    else fb(1,'bad',`${right}/5 steps are correct so far. Print <code>total</code> after <b>every</b> step, in this order: +=20, -=15, *=2, //=3, %=7.`);
+  }
+  if(i===2){
+    const P=parseFloat(document.getElementById('in_p').value),Q=parseFloat(document.getElementById('in_q').value),D=parseFloat(document.getElementById('in_d').value);
+    const exp=(P*Q-D)*1.05;
+    const usedInput=(code.match(/input\s*\(/g)||[]).length>=3,usedMinus=/-=/.test(code),usedTimes=/\*=/.test(code);
+    const right=nums(o).some(n=>Math.abs(n-exp)<0.01);
+    const tips=[];if(!usedInput)tips.push('use <code>input()</code> three times');if(!usedMinus)tips.push('use <code>-=</code> for the discount');if(!usedTimes)tips.push('use <code>*=</code> for VAT');
+    if(right&&!tips.length){fb(2,'good',`⭐ Superb! (${P} × ${Q} − ${D}) × 1.05 = <b>AED ${exp.toFixed(2)}</b>. Try other values, or take on the <b>Extension</b> challenge.<br><small>Bonus: use <code>round(bill, 2)</code> to show 2 decimal places.</small>`);win(2);}
+    else if(right)fb(2,'info','Your answer is right! To get full marks, '+tips.join(', ')+'.');
+    else fb(2,'bad',`The bill should be <b>${exp.toFixed(2)}</b> for these values. ${tips.length?'Try to '+tips.join(', ')+'.':'Check the order: multiply, then take off the discount, then add VAT.'}`);
+  }
+});
+/* G&T */
+document.querySelectorAll('[data-gt]').forEach(b=>b.onclick=()=>{const k=b.dataset.gt;
+  const v=document.getElementById(k==='x'?'gx':'ge').value.trim();const f=document.getElementById('fb'+k);
+  const ans=k==='x'?1:20;
+  const why=k==='x'?'7 ** 2 = 49 → 49 // 5 = 9 → 9 % 4 = <b>1</b>':'3 ** 2 = 9 first → 2 * 9 = 18 and 10 // 4 = 2 → 18 + 2 = <b>20</b>';
+  f.className='fb show '+(Number(v)===ans?'good':'bad');if(Number(v)===ans){S['g'+k]=1;saveS();}
+  f.innerHTML=(Number(v)===ans?'⭐ Correct! ':'Not quite. ')+why;
+  if(Number(document.getElementById('gx').value)===1&&Number(document.getElementById('ge').value)===20)win(3);});
+
+/* ---------- plenary ---------- */
+const answered={};
+document.querySelectorAll('.mcq').forEach(m=>{const q=m.dataset.q,a=+m.dataset.ans;
+  [...m.children].forEach((o,i)=>o.onclick=()=>{if(answered[q]!==undefined)return;answered[q]=i===a;
+    o.classList.add(i===a?'right':'wrong');S['q'+q]=i===a?1:0;saveS();m.children[a].classList.add('right');
+    document.getElementById('x'+q).classList.add('show');
+    const n=Object.keys(answered).length;
+    if(n===2){const s=Object.values(answered).filter(Boolean).length;
+      document.getElementById('score').textContent=`Your score: ${s}/2 ${s===2?'🎉':'Now read the explanations.'}`;}});});
+document.querySelectorAll('.miscon .card').forEach(c=>{const d=document.createElement('div');d.className='back';
+  d.innerHTML=c.querySelector('.back').innerHTML;c.querySelector('.back').remove();c.appendChild(d);c.onclick=()=>c.classList.toggle('open');});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* ======= SETTINGS: paste your Google Apps Script web-app URL here (see SETUP.md) ======= */
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbzYe2zg36GzH5VvPKlFNGYi69J6uP8hzGF4oNGR_pq3s9m59mufpElnZ5bbhMy4lhvq/exec";
+/* ======================================================================================= */
+
+let S={};let student=null;
+function ls(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v));}catch(e){return null;}}
+function saveS(){updateChip();if(student)ls('om_state',{student,S});}
+const PARTS=[
+ ['Starter: Program A prediction',['stA'],1],['Starter: Program B prediction',['stB'],1],
+ ['Level 1: Arithmetic program',['l1'],3],['Level 2: Assignment program',['l2'],3],
+ ['Level 2: Correct predictions',['l2pred'],5],['Level 3: Shopping bill',['l3'],3],
+ ['Extension (G&T): two puzzles',['gx','ge'],2],['Exit ticket: Q1 and Q2',['q1','q2'],2]];
+function score(){return PARTS.reduce((t,p)=>t+p[1].reduce((a,k)=>a+(S[k]||0),0),0);}
+function badgeOf(s){return s>=16?'Gold':s>=11?'Silver':'Bronze';}
+function updateChip(){document.getElementById('meScore').textContent=score();
+  document.getElementById('meName').textContent=student?student.name:'Not signed in';}
+
+/* sign-in */
+const saved=ls('om_state');
+function showSignin(){document.getElementById('signin').classList.add('show');setTimeout(()=>document.getElementById('sName').focus(),50);}
+if(saved&&saved.student){student=saved.student;S=saved.S||{};updateChip();}else showSignin();
+document.getElementById('meChip').onclick=()=>{if(student){document.getElementById('sName').value=student.name;document.getElementById('sSec').value=student.section;document.getElementById('sRoll').value=student.roll;}showSignin();};
+document.getElementById('sGo').onclick=()=>{const n=document.getElementById('sName').value.trim().replace(/\s+/g,' ');
+  const r=document.getElementById('sRoll').value.trim();
+  if(n.length<3){document.getElementById('sErr').textContent='Please type your full name.';return;}
+  const sec=document.getElementById('sSec').value;const same=student&&student.name===n&&student.section===sec;student={name:n,section:sec,roll:r};if(!same)S={};saveS();
+  document.getElementById('signin').classList.remove('show');};
+document.getElementById('sSkip').onclick=()=>document.getElementById('signin').classList.remove('show');
+
+/* badge drawing */
+const COL={Gold:['#fde68a','#f5c451','#b7791f','#7a5200'],Silver:['#f8fafc','#d1d5db','#9ca3af','#374151'],Bronze:['#f6c9a0','#e19a5c','#9a5b2b','#5b3015']};
+function drawBadge(cv,b,name,sec,sc,date){
+  const x=cv.getContext('2d'),W=cv.width,c=COL[b];x.clearRect(0,0,W,cv.height);
+  x.fillStyle='#fffdf8';x.fillRect(0,0,W,cv.height);
+  // ribbons
+  x.fillStyle='#2556c4';x.beginPath();x.moveTo(200,60);x.lineTo(270,60);x.lineTo(230,300);x.lineTo(150,280);x.fill();
+  x.fillStyle='#1f8a5b';x.beginPath();x.moveTo(330,60);x.lineTo(400,60);x.lineTo(450,280);x.lineTo(370,300);x.fill();
+  // medal
+  const cx=300,cy=320,R=165;
+  x.save();x.translate(cx,cy);x.fillStyle=c[2];x.beginPath();
+  for(let i=0;i<32;i++){const a=i*Math.PI/16,r=i%2?R:R-14;x.lineTo(Math.cos(a)*r,Math.sin(a)*r);}x.fill();x.restore();
+  const g=x.createRadialGradient(cx-50,cy-60,20,cx,cy,R);g.addColorStop(0,c[0]);g.addColorStop(.6,c[1]);g.addColorStop(1,c[2]);
+  x.fillStyle=g;x.beginPath();x.arc(cx,cy,R-26,0,7);x.fill();
+  x.strokeStyle=c[3]+'55';x.lineWidth=4;x.beginPath();x.arc(cx,cy,R-44,0,7);x.stroke();
+  x.fillStyle=c[3];x.textAlign='center';
+  x.font='600 30px "JetBrains Mono",Consolas,monospace';x.fillText('+= ** //',cx,cy-58);
+  x.font='800 56px Lexend,Arial,sans-serif';x.fillText(b.toUpperCase(),cx,cy+8);
+  x.font='600 22px Lexend,Arial,sans-serif';x.fillText('OPERATOR '+(b==='Gold'?'MASTER':b==='Silver'?'EXPERT':'EXPLORER'),cx,cy+44);
+  x.font='700 30px Lexend,Arial,sans-serif';x.fillText(sc+' / 20',cx,cy+90);
+  // text
+  x.fillStyle='#1d2433';x.font='700 32px Lexend,Arial,sans-serif';
+  let nm=name||'Student';while(x.measureText(nm).width>540&&nm.length>4)nm=nm.slice(0,-2)+'…';x.fillText(nm,cx,560);
+  x.font='400 20px Lexend,Arial,sans-serif';x.fillStyle='#5d6678';
+  x.fillText((sec?sec+' · ':'')+'Python Revision: Arithmetic & Assignment Operators',cx,596);
+  x.fillText('Sharjah Indian School, Juwaiza · '+date,cx,628);
+  x.font='italic 18px Lexend,Arial,sans-serif';x.fillText('Ms. Ramya T M, Department of Computer Science',cx,668);
+}
+function download(url,name){const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();}
+function fileBase(){return ((student?student.name:'student')+'_'+(student?student.section:'')).replace(/[^\w]+/g,'_');}
+function feedback(){const s=[],n=[];
+  if(S.l1)s.push('writes correct expressions with all seven arithmetic operators');else n.push('practise the seven arithmetic operators (+, -, *, /, //, %, **) with labels');
+  if(S.l2)s.push('updates a variable correctly using assignment operators');else n.push('practise += -= *= //= %= by updating one variable step by step');
+  if((S.l2pred||0)>=4)s.push('predicts program output accurately');else n.push('predict each value on paper before running the program');
+  if(S.l3)s.push('combines both operator types in a real-life program');
+  if(S.gx&&S.ge)s.push('shows strong reasoning on operator precedence');
+  if(!(S.q1))n.push('revise the difference between / , // and %');
+  return {s,n};}
+let lastRec=null;
+function openReport(){
+  const sc=score(),b=badgeOf(sc),date=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('rTitle').textContent=(b==='Gold'?'🥇':b==='Silver'?'🥈':'🥉')+' '+b+' badge!';
+  document.getElementById('rSub').textContent=student?`${student.name} · ${student.section}${student.roll?' · Roll '+student.roll:''} · ${date}`:'Demo mode: you are not signed in, so nothing is saved.';
+  drawBadge(document.getElementById('badgeCv'),b,student?student.name:'Demo Student',student?student.section:'',sc,date);
+  const t=document.getElementById('rTab');t.innerHTML='';
+  PARTS.forEach(p=>{const got=p[1].reduce((a,k)=>a+(S[k]||0),0);t.insertAdjacentHTML('beforeend',`<tr><td>${p[0]}</td><td>${got} / ${p[2]}</td></tr>`);});
+  t.insertAdjacentHTML('beforeend',`<tr class="tot"><td>Total</td><td>${sc} / 20</td></tr>`);
+  const f=feedback();const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+  document.getElementById('rMsg').innerHTML=(f.s.length?'<b>Well done! You can:</b><br>'+f.s.map(s=>'✔ '+cap(s.replace(/^writes/,'write').replace(/^updates/,'update').replace(/^predicts/,'predict').replace(/^combines/,'combine').replace(/^shows/,'show'))).join('<br>')+'<br>':'')+'<b>Next step:</b> '+(f.n.length?cap(f.n[0])+'.':'Try the G&amp;T homework task!');
+  document.getElementById('report').classList.add('show');
+  const sv=document.getElementById('rSaved');
+  if(!student){sv.className='saved';sv.textContent='Demo mode: not saved.';return;}
+  lastRec={time:new Date().toISOString(),name:student.name,section:student.section,roll:student.roll,score:sc,max:20,badge:b,
+    starter:(S.stA||0)+(S.stB||0),l1:S.l1||0,l2:S.l2||0,l2pred:S.l2pred||0,l3:S.l3||0,ext:(S.gx||0)+(S.ge||0),exit:(S.q1||0)+(S.q2||0)};
+  sendRec(lastRec);}
+async function sendRec(rec){const sv=document.getElementById('rSaved');
+  const q=ls('om_queue')||[];q.push(rec);ls('om_queue',q);
+  if(!SHEET_URL){sv.className='saved err';sv.textContent='Saved on this computer only. The class Google Sheet is not connected yet.';return;}
+  sv.className='saved';sv.textContent='Saving to the class list…';
+  const ok=await flushQueue();
+  sv.className='saved '+(ok?'ok':'err');sv.textContent=ok?'✅ Saved to the class list.':'⚠️ Could not reach the class list. It will try again automatically.';}
+async function flushQueue(){let q=ls('om_queue')||[];if(!SHEET_URL||!q.length)return true;
+  const rest=[];
+  for(const r of q){try{await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(r)});}catch(e){rest.push(r);}}
+  ls('om_queue',rest);return rest.length===0;}
+setInterval(flushQueue,60000);flushQueue();
+document.getElementById('finishBtn').onclick=()=>{
+  if(S.q1===undefined||S.q2===undefined){const s=document.getElementById('score');s.textContent='Answer both exit-ticket questions first, then press Finish.';s.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  openReport();};
+document.getElementById('rClose').onclick=()=>document.getElementById('report').classList.remove('show');
+document.getElementById('dlBadge').onclick=()=>{const cv=document.getElementById('badgeCv');download(cv.toDataURL('image/png'),fileBase()+'_'+badgeOf(score())+'_badge.png');};
+document.getElementById('dlReport').onclick=()=>{
+  const sc=score(),b=badgeOf(sc),f=feedback(),date=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  if(!window.jspdf){alert2('The PDF tool could not load. Please download the badge, or try again with internet.');return;}
+  const doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'});
+  doc.setFillColor(29,36,51);doc.rect(0,0,210,30,'F');doc.setTextColor(255);doc.setFont('helvetica','bold');doc.setFontSize(16);
+  doc.text('SHARJAH INDIAN SCHOOL, JUWAIZA',105,13,{align:'center'});doc.setFontSize(11);doc.setFont('helvetica','normal');
+  doc.text('Department of Computer Science  |  Grade VII  |  Programming with Python',105,21,{align:'center'});
+  doc.setTextColor(29,36,51);doc.setFont('helvetica','bold');doc.setFontSize(18);doc.text('Performance Report: Operator Mart',14,44);
+  doc.setFontSize(11);doc.setFont('helvetica','normal');doc.text('Revision of Arithmetic & Assignment Operators (Ch. 8: More on Python)',14,51);
+  const info=[['Name',student?student.name:'Demo Student'],['Section',student?student.section:'-'],['Roll no.',student&&student.roll?student.roll:'-'],['Date',date],['Teacher','Ms. Ramya T M']];
+  info.forEach((r,i)=>{doc.setFont('helvetica','bold');doc.text(r[0]+':',14,62+i*7);doc.setFont('helvetica','normal');doc.text(String(r[1]),42,62+i*7);});
+  doc.addImage(document.getElementById('badgeCv').toDataURL('image/png'),'PNG',140,38,55,66);
+  let y=100;doc.setFillColor(244,241,234);doc.rect(14,y,182,9,'F');doc.setFont('helvetica','bold');doc.text('Task',17,y+6);doc.text('Points',190,y+6,{align:'right'});y+=9;doc.setFont('helvetica','normal');
+  PARTS.forEach(p=>{const got=p[1].reduce((a,k)=>a+(S[k]||0),0);y+=7;doc.text(p[0],17,y);doc.text(got+' / '+p[2],190,y,{align:'right'});doc.setDrawColor(227,221,208);doc.line(14,y+2.5,196,y+2.5);});
+  y+=11;doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text('Total score: '+sc+' / 20',17,y);doc.text(b+' badge',190,y,{align:'right'});
+  y+=8;doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(93,102,120);doc.text('Badge bands: Gold 16-20  |  Silver 11-15  |  Bronze 0-10',17,y);
+  doc.setTextColor(29,36,51);doc.setFontSize(11);y+=12;
+  const para=(h,arr)=>{if(!arr.length)return;doc.setFont('helvetica','bold');doc.text(h,17,y);y+=6;doc.setFont('helvetica','normal');
+    arr.forEach(s=>{const L=doc.splitTextToSize('- '+s.charAt(0).toUpperCase()+s.slice(1)+'.',176);doc.text(L,19,y);y+=L.length*5;});y+=3;};
+  para('Strengths',f.s);para('Next steps',f.n.length?f.n:['Try the G&T homework task: use input(), ** and % in your pocket money tracker']);
+  doc.setFont('helvetica','bold');doc.text('Homework: My Pocket Money Tracker',17,y);y+=6;doc.setFont('helvetica','normal');
+  doc.text(doc.splitTextToSize('Start with pocket = 200, then use -=, += and //= to show spending, savings and a weekly share. Write your predictions as # comments.',176),19,y);
+  y+=8;if(y>258){doc.addPage();y=20;}
+  doc.setDrawColor(37,86,196);doc.setLineDashPattern([2,2],0);doc.rect(14,y,182,24);doc.setLineDashPattern([],0);
+  doc.setFontSize(10);doc.setTextColor(93,102,120);doc.text("Teacher's remarks:",17,y+6);doc.text('Parent signature: ____________________',120,y+32);
+  doc.save(fileBase()+'_report.pdf');};
+function alert2(m){const sv=document.getElementById('rSaved');sv.className='saved err';sv.textContent=m;}
+
+/* teacher panel */
+let rows=[];
+document.getElementById('teacherBtn').onclick=()=>{document.getElementById('tSetup').style.display=SHEET_URL?'none':'block';
+  const k=ls('om_tkey');if(k)document.getElementById('tKey').value=k;document.getElementById('teacher').classList.add('show');};
+document.getElementById('tClose').onclick=()=>document.getElementById('teacher').classList.remove('show');
+document.getElementById('tLoad').onclick=async()=>{const m=document.getElementById('tMsg');
+  if(!SHEET_URL){m.textContent='Connect the Google Sheet first (see SETUP.md).';return;}
+  const key=document.getElementById('tKey').value.trim();ls('om_tkey',key);m.textContent='Loading…';
+  try{const r=await fetch(SHEET_URL+'?key='+encodeURIComponent(key));const d=await r.json();
+    if(!d.ok){m.textContent='❌ '+(d.error||'Wrong teacher key.');return;}rows=d.rows;m.textContent='Loaded '+rows.length+' attempts.';renderT();}
+  catch(e){m.textContent='❌ Could not load the list. Check the web-app URL and that access is set to "Anyone".';}};
+['tSec','tLatest'].forEach(id=>document.getElementById(id).onchange=renderT);
+function view(){const sec=document.getElementById('tSec').value;let v=rows.filter(r=>!sec||r.section===sec);
+  if(document.getElementById('tLatest').value==='1'){const m={};v.forEach(r=>{const k=(r.section+'|'+String(r.name).toLowerCase().trim());if(!m[k]||new Date(r.time)>new Date(m[k].time))m[k]=r;});v=Object.values(m);}
+  return v.sort((a,b)=>String(a.section).localeCompare(b.section)||(Number(a.roll)||999)-(Number(b.roll)||999)||String(a.name).localeCompare(b.name));}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function renderT(){const v=view(),c={Gold:0,Silver:0,Bronze:0};v.forEach(r=>c[r.badge]=(c[r.badge]||0)+1);
+  document.getElementById('tCounts').innerHTML=`<span>👥 ${v.length} students</span><span>🥇 Gold ${c.Gold}</span><span>🥈 Silver ${c.Silver}</span><span>🥉 Bronze ${c.Bronze}</span>`;
+  document.getElementById('tTab').innerHTML='<tr><th>Section</th><th>Roll</th><th>Name</th><th>Score</th><th>Badge</th><th>Starter</th><th>L1</th><th>L2</th><th>L2 pred.</th><th>L3</th><th>G&amp;T</th><th>Exit</th><th>Time</th></tr>'+
+   v.map(r=>`<tr><td>${esc(r.section)}</td><td>${esc(r.roll)}</td><td>${esc(r.name)}</td><td><b>${esc(r.score)}</b>/20</td><td><span class="bdg ${esc(r.badge)}">${esc(r.badge)}</span></td><td>${esc(r.starter)}/2</td><td>${esc(r.l1)}/3</td><td>${esc(r.l2)}/3</td><td>${esc(r.l2pred)}/5</td><td>${esc(r.l3)}/3</td><td>${esc(r.ext)}/2</td><td>${esc(r.exit)}/2</td><td>${esc(new Date(r.time).toLocaleString('en-GB',{dateStyle:'short',timeStyle:'short'}))}</td></tr>`).join('');}
+document.getElementById('tCsv').onclick=()=>{const v=view();if(!v.length){document.getElementById('tMsg').textContent='Load the list first.';return;}
+  const H=['time','section','roll','name','score','max','badge','starter','l1','l2','l2pred','l3','ext','exit'];
+  const csv=[H.join(',')].concat(v.map(r=>H.map(h=>'"'+String(r[h]??'').replace(/"/g,'""')+'"').join(','))).join('\n');
+  download(URL.createObjectURL(new Blob([csv],{type:'text/csv'})),'Grade7_Operator_Mart_badges.csv');};
+updateChip();
+</script>
+
+</body>
+</html>
